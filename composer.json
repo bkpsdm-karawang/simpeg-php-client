@@ -1,0 +1,43 @@
+{
+    "name": "bkpsdm-karawang/simpeg-php-client",
+    "description": "PHP Client for Simpeg Service BKPSDM Karawang",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Denma Syarikin",
+            "email": "denmasyarikin@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3",
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/support": "^8.5"
+    },
+    "suggest": {
+        "laravel/framework": "^8.5"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "SimpegClient\\Laravel\\": "Laravel/",
+            "SimpegClient\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpegClient\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SimpegClient\\Laravel\\SimpegClientServiceProvider"
+            ],
+            "aliases": {
+                "SimpegClient": "SimpegClient\\Laravel\\Facades\\SimpegClient",
+                "SimpegClientRoute": "SimpegClient\\Laravel\\Facades\\Route"
+            }
+        }
+    }
+}
