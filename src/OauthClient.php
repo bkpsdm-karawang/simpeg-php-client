@@ -5,9 +5,10 @@ namespace SimpegClient;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Contracts\Cache\Store;
 use InvalidArgumentException;
 
-class Oauth
+class OauthClient
 {
     /**
      * client configruation
@@ -15,6 +16,13 @@ class Oauth
      * @var array
      */
     protected $config;
+
+    /**
+     * storage token file
+     *
+     * @var Client
+     */
+    protected $tokenFile;
 
     /**
      * guzzle client interface
@@ -31,29 +39,45 @@ class Oauth
     protected $token = null;
 
     /**
-     * user simpeg
-     *
-     * @var array
-     */
-    protected $user = null;
-
-    /**
      * constructor
      *
      * @param ClientInterface $client
      *
      * @return void
      */
-    public function __construct(Client $client, array $config = [])
+    public function __construct(Client $client, array $config, string $file = 'app/client.json')
     {
         $this->config = $config;
         $this->client = $client;
+        $this->tokenFile = storage_path($file);
+        $this->initToken();
+    }
+
+    /**
+     * initial client token
+     */
+    protected function initToken()
+    {
+        if (file_exists($this->tokenFile)) {
+            $this->setToken(json_decode(file_get_contents($this->tokenFile), true));
+            return;
+        }
+
+        $this->getToken();
+    }
+
+    /**
+     * set client token
+     */
+    public function setToken(array $token): void
+    {
+        $this->token = $token;
     }
 
     /**
      * get token from simpeg
      */
-    public function getToken(string $code = null)
+    public function getToken()
     {
         if (isset($this->token)) {
             return $this->token;
@@ -62,11 +86,10 @@ class Oauth
         $response = null;
 
         $credentials = [
-            'grant_type' => 'authorization_code',
+            'grant_type' => 'client_credentials',
             'client_id' => $this->config['client_id'],
             'client_secret' => $this->config['client_secret'],
-            'redirect_uri' => env('APP_URL') . '/callback/simpeg',
-            'code' => $code
+            'scope' => isset($this->config['client_scope']) ? explode(',', $this->config['client_scope']) : []
         ];
 
         try {
@@ -76,23 +99,13 @@ class Oauth
         }
 
         if (isset($response)) {
-            return $this->token = $this->handleResponse($response);
+            $token = $this->handleResponse($response);
+            $writeData = json_encode($token);
+            file_put_contents($this->tokenFile, $writeData);
+            return $this->token = $token;
         }
 
         throw new \Exception('Invalid response');
-    }
-
-    /**
-     * set token from local
-     */
-    public function setToken(string $accessToken, string $refreshToken, $expiresIn = 0): void
-    {
-        $this->token = [
-            'token_type' => 'Bearer',
-            'expires_in' => $expiresIn,
-            'access_token' => $accessToken,
-            'refresh_token' => $refreshToken
-        ];
     }
 
     /**
@@ -112,29 +125,7 @@ class Oauth
         }
     }
 
-    /**
-     * get user simpeg
-     */
-    public function getUser(string $code = null)
-    {
-        if (isset($this->user)) {
-            return $this->user;
-        }
-
-        if (!$this->token && !is_null($$code)) {
-            $this->getToken($code);
-        }
-
-        $response = $this->makeRequest('GET', '/api/profile');
-
-        if (isset($response)) {
-            return $this->user = $this->handleResponse($response);
-        }
-
-        return null;
-    }
-
-    protected function handleResponse(Response $response)
+    public function handleResponse(Response $response)
     {
         $body = $response->getBody();
         $content = $body->getContents();

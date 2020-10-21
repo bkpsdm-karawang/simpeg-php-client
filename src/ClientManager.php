@@ -1,19 +1,21 @@
 <?php
 
-namespace SipmegClient;
+namespace SimpegClient;
 
 use GuzzleHttp\ClientInterface;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
+use SimpegClient\Modules\Pegawai;
+use SimpegClient\Modules\User;
 
 class ClientManager extends Manager
 {
     /**
-     * guzzle client interface
+     * ouath client
      *
-     * @var ClientInterface
+     * @var OauthClient
      */
-    protected $client;
+    protected $oauthClient;
 
     /**
      * constructor
@@ -22,9 +24,9 @@ class ClientManager extends Manager
      *
      * @return void
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(OauthClient $oauthClient)
     {
-        $this->client = $client;
+        $this->oauthClient = $oauthClient;
     }
 
     /**
@@ -36,6 +38,26 @@ class ClientManager extends Manager
     public function module(string $name)
     {
         return $this->driver($name);
+    }
+
+    /**
+     * Create an instance of the specified driver.
+     *
+     * @return \SimpegClient\Modules\AbstractModule
+     */
+    protected function createUserDriver()
+    {
+        return new User($this->oauthClient);
+    }
+
+    /**
+     * Create an instance of the specified driver.
+     *
+     * @return \SimpegClient\Modules\AbstractModule
+     */
+    protected function createPegawaiDriver()
+    {
+        return new Pegawai($this->oauthClient);
     }
 
     /**

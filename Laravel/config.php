@@ -11,9 +11,10 @@ return [
     |
     */
 
-    'client_uri' => env('SIMPEG_URI', 'https://api.simpeg.bkpsdm.karawangkab.go.id'),
+    'client_url' => env('SIMPEG_URL', 'https://api.simpeg.bkpsdm.karawangkab.go.id'),
     'client_id' => env('SIMPEG_CLIENT_ID'),
     'client_secret' => env('SIMPEG_CLIENT_SECRET'),
+    'client_scope' => env('SIMPEG_CLIENT_SCOPE'),
 
     /*
     |--------------------------------------------------------------------------

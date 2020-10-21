@@ -2,8 +2,6 @@
 
 namespace SimpegClient\Laravel;
 
-use Illuminate\Contracts\Routing\Registrar as Router;
-
 class RouteRegistrar
 {
     /**
@@ -19,7 +17,7 @@ class RouteRegistrar
      * @param  \Illuminate\Contracts\Routing\Registrar  $router
      * @return void
      */
-    public function __construct(Router $router)
+    public function __construct($router)
     {
         $this->router = $router;
     }
@@ -27,11 +25,33 @@ class RouteRegistrar
     /**
      * Register routes for transient tokens, clients, and personal access tokens.
      *
-     * @param array $writable
      * @return void
      */
-    public function all(array $writable = [])
+    public function all()
     {
-        //
+        $this->modulePegawai();
+        $this->moduleUser();
+    }
+
+    /**
+     * Register the routes for module pegawai.
+     *
+     * @return void
+     */
+    public function modulePegawai()
+    {
+        $this->router->get('/pegawai', ['uses' => 'PegawaiController@getList', 'as' => 'simpeg.pegawai.list']);
+        $this->router->get('/pegawai/{id}', ['uses' => 'PegawaiController@getDetail', 'as' => 'simpeg.pegawai.detail']);
+    }
+
+    /**
+     * Register the routes for module pegawai.
+     *
+     * @return void
+     */
+    public function moduleUser()
+    {
+        $this->router->get('/user', ['uses' => 'UserController@getList', 'as' => 'simpeg.user.list']);
+        $this->router->get('/user/{id}', ['uses' => 'UserController@getDetail', 'as' => 'simpeg.user.detail']);
     }
 }

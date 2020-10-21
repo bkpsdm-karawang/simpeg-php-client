@@ -29,13 +29,12 @@ class Router
      *
      * @param  callable|null  $callback
      * @param  array  $options
-     * @param  array  $writable
      * @return void
      */
-    public static function routes($callback = null, array $options = [], $writable = [])
+    public static function routes($callback = null, array $options = [])
     {
-        $callback = $callback ?: function ($router) use ($writable) {
-            $router->all($writable);
+        $callback = $callback ?: function ($router) {
+            $router->all();
         };
 
         $defaultOptions = [
