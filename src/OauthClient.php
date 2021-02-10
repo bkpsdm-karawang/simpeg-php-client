@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Cache\Store;
 use InvalidArgumentException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OauthClient
 {
@@ -135,7 +136,7 @@ class OauthClient
             return $data;
         }
 
-        throw new \Exception($data['hint'] ?? $data['message']);
+        throw new HttpException(400, $data['hint'] ?? $data['message']);
     }
 
     /**
