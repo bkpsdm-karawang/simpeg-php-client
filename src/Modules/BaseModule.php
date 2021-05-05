@@ -87,7 +87,7 @@ abstract class BaseModule
             $response = $error->getResponse();
         }
 
-        if (isset($response) && $response->getStatusCode() === 200) {
+        if (isset($response)) {
             return $this->oauthClient->handleResponse($response);
         }
 

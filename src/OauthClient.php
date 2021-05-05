@@ -21,7 +21,7 @@ class OauthClient
     /**
      * storage token file
      *
-     * @var Client
+     * @var String
      */
     protected $tokenFile;
 
@@ -81,7 +81,7 @@ class OauthClient
     public function getToken()
     {
         if (isset($this->token)) {
-            return $this->token;
+        return $this->token;
         }
 
         $response = null;
@@ -136,7 +136,7 @@ class OauthClient
             return $data;
         }
 
-        throw new HttpException(400, $data['hint'] ?? $data['message']);
+        throw new HttpException($response->getStatusCode(), $data['hint'] ?? $data['message']);
     }
 
     /**
