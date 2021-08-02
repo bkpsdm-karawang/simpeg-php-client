@@ -5,42 +5,41 @@ namespace SimpegClient;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Contracts\Cache\Store;
 use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OauthClient
 {
     /**
-     * client configruation
+     * client configruation.
      *
      * @var array
      */
     protected $config;
 
     /**
-     * storage token file
+     * storage token file.
      *
-     * @var String
+     * @var string
      */
     protected $tokenFile;
 
     /**
-     * guzzle client interface
+     * guzzle client interface.
      *
      * @var Client
      */
     protected $client;
 
     /**
-     * token response from simpeg
+     * token response from simpeg.
      *
      * @var array
      */
     protected $token = null;
 
     /**
-     * constructor
+     * constructor.
      *
      * @param ClientInterface $client
      *
@@ -55,12 +54,13 @@ class OauthClient
     }
 
     /**
-     * initial client token
+     * initial client token.
      */
     protected function initToken()
     {
         if (file_exists($this->tokenFile)) {
             $this->setToken(json_decode(file_get_contents($this->tokenFile), true));
+
             return;
         }
 
@@ -68,7 +68,7 @@ class OauthClient
     }
 
     /**
-     * set client token
+     * set client token.
      */
     public function setToken(array $token): void
     {
@@ -76,12 +76,12 @@ class OauthClient
     }
 
     /**
-     * get token from simpeg
+     * get token from simpeg.
      */
     public function getToken()
     {
         if (isset($this->token)) {
-        return $this->token;
+            return $this->token;
         }
 
         $response = null;
@@ -90,11 +90,11 @@ class OauthClient
             'grant_type' => 'client_credentials',
             'client_id' => $this->config['client_id'],
             'client_secret' => $this->config['client_secret'],
-            'scope' => isset($this->config['client_scope']) ? explode(',', $this->config['client_scope']) : []
+            'scope' => isset($this->config['client_scope']) ? explode(',', $this->config['client_scope']) : ['*'],
         ];
 
         try {
-            $response = $this->client->post('/oauth/token', ['form_params' => $credentials]);
+            $response = $this->client->post($this->config['issue_token_url'], ['form_params' => $credentials]);
         } catch (ClientException $err) {
             $response = $err->getResponse();
         }
@@ -103,6 +103,7 @@ class OauthClient
             $token = $this->handleResponse($response);
             $writeData = json_encode($token);
             file_put_contents($this->tokenFile, $writeData);
+
             return $this->token = $token;
         }
 
@@ -110,7 +111,7 @@ class OauthClient
     }
 
     /**
-     * make request
+     * make request.
      */
     public function makeRequest($method = 'GET', string $endpoint, array $options = [])
     {
@@ -132,7 +133,7 @@ class OauthClient
         $content = $body->getContents();
         $data = json_decode($content, true);
 
-        if ($response->getStatusCode() === 200) {
+        if (200 === $response->getStatusCode()) {
             return $data;
         }
 
@@ -140,16 +141,16 @@ class OauthClient
     }
 
     /**
-     * generate bearer token authorization
+     * generate bearer token authorization.
      */
     protected function createTokenHeader(): array
     {
-        if (! $this->token) {
+        if (!$this->token) {
             throw new InvalidArgumentException('Not token availbale');
         }
 
         return [
-            'Authorization' => "{$this->token['token_type']} {$this->token['access_token']}"
+            'Authorization' => "{$this->token['token_type']} {$this->token['access_token']}",
         ];
     }
 }

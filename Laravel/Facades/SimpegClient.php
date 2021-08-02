@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \SimpegClient\Client module(string $module)
+ *
  * @see \SimpegClient\Client
  */
 class SimpegClient extends Facade

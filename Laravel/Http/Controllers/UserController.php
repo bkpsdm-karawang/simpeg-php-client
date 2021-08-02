@@ -7,8 +7,7 @@ use SimpegClient\Laravel\Facades\SimpegClient;
 class UserController extends Controller
 {
     /**
-     * constructor
-     *
+     * constructor.
      */
     public function __construct(SimpegClient $manager)
     {

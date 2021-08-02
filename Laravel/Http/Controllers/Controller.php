@@ -8,14 +8,13 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     /**
-     * client
+     * client.
      */
     protected $client;
 
     /**
      * get list.
      *
-     * @param \Illuminate\Http\Request $request
      * @return JsonResponse
      */
     public function getList(Request $request)
@@ -26,8 +25,8 @@ class Controller extends BaseController
     /**
      * get detail.
      *
-     * @param \Illuminate\Http\Request $request
      * @param mixed $id
+     *
      * @return JsonResponse
      */
     public function getDetail(Request $request, $id)

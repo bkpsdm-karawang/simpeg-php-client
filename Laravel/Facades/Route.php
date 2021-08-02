@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \SimpegClient\Client routes($callback = null, array $options = [])
+ *
  * @see \SimpegClient\Laravel\Router
  */
 class Route extends Facade

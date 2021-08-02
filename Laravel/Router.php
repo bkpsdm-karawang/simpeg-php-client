@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\Route;
 class Router
 {
     /**
-     * configuration
+     * configuration.
      *
      * @var array
      */
     protected static $config = [];
 
     /**
-     * constructor
+     * constructor.
      *
-     * @param array $config
      * @return void
      */
     public function __construct(array $config)
@@ -27,8 +26,8 @@ class Router
     /**
      * Binds the SOTK routes into the controller.
      *
-     * @param  callable|null  $callback
-     * @param  array  $options
+     * @param callable|null $callback
+     *
      * @return void
      */
     public static function routes($callback = null, array $options = [])

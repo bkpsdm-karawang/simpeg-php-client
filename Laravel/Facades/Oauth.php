@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \SimpegClient\Oauth setToken(string $accessToken, string $refreshToken, $expiresIn = 0): void
  * @method static \SimpegClient\Oauth getToken(string $code = null)
  * @method static \SimpegClient\Oauth getUser(string $code = null)
+ *
  * @see \SimpegClient\Oauth
  */
 class Oauth extends Facade

@@ -10,28 +10,28 @@ use SimpegClient\OauthClient;
 abstract class BaseModule
 {
     /**
-     * ouath client
+     * ouath client.
      *
      * @var \SimpegClient\OauthClient
      */
     protected $oauthClient;
 
     /**
-     * base endpoint of module
+     * base endpoint of module.
      *
      * @var string
      */
     protected $endpoint;
 
     /**
-     * query params
+     * query params.
      *
      * @var array
      */
     protected $query = [];
 
     /**
-     * constructor
+     * constructor.
      *
      * @param ClientInterface $client
      *
@@ -43,8 +43,8 @@ abstract class BaseModule
     }
 
     /**
-     * with query string
-     * @param string $relation
+     * with query string.
+     *
      * @return ModuleAbstract
      */
     public function with(string $relation)
@@ -59,8 +59,8 @@ abstract class BaseModule
     }
 
     /**
-     * search query string
-     * @param string $keyword
+     * search query string.
+     *
      * @return ModuleAbstract
      */
     public function search(string $keyword)
@@ -73,8 +73,8 @@ abstract class BaseModule
     /**
      * get listing data.
      *
-     * @param array $query
      * @return array
+     *
      * @throws Exception
      */
     public function getList(array $query = [])
@@ -98,7 +98,6 @@ abstract class BaseModule
      * get detail data.
      *
      * @param mixed $identifier
-     * @param array $query
      */
     public function getDetail($identifier, array $query = []): array
     {
@@ -110,7 +109,7 @@ abstract class BaseModule
             $response = $error->getResponse();
         }
 
-        if (isset($response) && $response->getStatusCode() === 200) {
+        if (isset($response) && 200 === $response->getStatusCode()) {
             return $this->oauthClient->handleResponse($response);
         }
 
@@ -119,11 +118,8 @@ abstract class BaseModule
 
     /**
      * build query params.
-     *
-     * @param array $query
-     * @return array
      */
-    protected function buildQuery(array $query = []) : array
+    protected function buildQuery(array $query = []): array
     {
         return array_merge_recursive($this->query, $query);
     }
@@ -131,7 +127,6 @@ abstract class BaseModule
     /**
      * proxy to client.
      *
-     * @param array $arguments
      * @return ReponseContract
      */
     public function __call($name, array $arguments)

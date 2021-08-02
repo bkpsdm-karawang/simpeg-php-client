@@ -11,14 +11,14 @@ use SimpegClient\Modules\User;
 class ClientManager extends Manager
 {
     /**
-     * ouath client
+     * ouath client.
      *
      * @var OauthClient
      */
     protected $oauthClient;
 
     /**
-     * constructor
+     * constructor.
      *
      * @param ClientInterface $client
      *
@@ -30,9 +30,8 @@ class ClientManager extends Manager
     }
 
     /**
-     * ceate module
+     * ceate module.
      *
-     * @param string $name
      * @return \SipmegClient\Modules\ModuleContract
      */
     public function module(string $name)

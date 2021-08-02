@@ -10,35 +10,35 @@ use InvalidArgumentException;
 class Oauth
 {
     /**
-     * client configruation
+     * client configruation.
      *
      * @var array
      */
     protected $config;
 
     /**
-     * guzzle client interface
+     * guzzle client interface.
      *
      * @var Client
      */
     protected $client;
 
     /**
-     * token response from simpeg
+     * token response from simpeg.
      *
      * @var array
      */
     protected $token = null;
 
     /**
-     * user simpeg
+     * user simpeg.
      *
      * @var array
      */
     protected $user = null;
 
     /**
-     * constructor
+     * constructor.
      *
      * @param ClientInterface $client
      *
@@ -51,7 +51,7 @@ class Oauth
     }
 
     /**
-     * get token from simpeg
+     * get token from simpeg.
      */
     public function getToken(string $code = null)
     {
@@ -65,12 +65,13 @@ class Oauth
             'grant_type' => 'authorization_code',
             'client_id' => $this->config['client_id'],
             'client_secret' => $this->config['client_secret'],
-            'redirect_uri' => env('APP_URL') . '/callback/simpeg',
-            'code' => $code
+            'redirect_uri' => $this->config['client_callback_url'],
+            'scope' => $this->config['user_scope'],
+            'code' => $code,
         ];
 
         try {
-            $response = $this->client->post('/oauth/token', ['form_params' => $credentials]);
+            $response = $this->client->post($this->config['issue_token_url'], ['form_params' => $credentials]);
         } catch (ClientException $err) {
             $response = $err->getResponse();
         }
@@ -83,7 +84,7 @@ class Oauth
     }
 
     /**
-     * set token from local
+     * set token from local.
      */
     public function setToken(string $accessToken, string $refreshToken, $expiresIn = 0): void
     {
@@ -91,12 +92,12 @@ class Oauth
             'token_type' => 'Bearer',
             'expires_in' => $expiresIn,
             'access_token' => $accessToken,
-            'refresh_token' => $refreshToken
+            'refresh_token' => $refreshToken,
         ];
     }
 
     /**
-     * make request
+     * make request.
      */
     public function makeRequest($method = 'GET', string $endpoint, array $options = [])
     {
@@ -113,7 +114,7 @@ class Oauth
     }
 
     /**
-     * get user simpeg
+     * get user simpeg.
      */
     public function getUser(string $code = null)
     {
@@ -125,7 +126,7 @@ class Oauth
             $this->getToken($code);
         }
 
-        $response = $this->makeRequest('GET', '/api/profile');
+        $response = $this->makeRequest('GET', $this->config['get_profile_url']);
 
         if (isset($response)) {
             return $this->user = $this->handleResponse($response);
@@ -140,7 +141,7 @@ class Oauth
         $content = $body->getContents();
         $data = json_decode($content, true);
 
-        if ($response->getStatusCode() === 200) {
+        if (200 === $response->getStatusCode()) {
             return $data;
         }
 
@@ -148,16 +149,16 @@ class Oauth
     }
 
     /**
-     * generate bearer token authorization
+     * generate bearer token authorization.
      */
     protected function createTokenHeader(): array
     {
-        if (! $this->token) {
+        if (!$this->token) {
             throw new InvalidArgumentException('Not token availbale');
         }
 
         return [
-            'Authorization' => "{$this->token['token_type']} {$this->token['access_token']}"
+            'Authorization' => "{$this->token['token_type']} {$this->token['access_token']}",
         ];
     }
 }

@@ -38,16 +38,15 @@ class SimpegClientServiceProvider extends ServiceProvider
     }
 
     /**
-     * create guzzle client
+     * create guzzle client.
      *
-     * @param array $config
      * @return \GuzzleHttp\Client
      */
     protected function createGuzzleClient(array $config)
     {
         return new Client([
             'verify' => false,
-            'base_uri' => $config['client_url']
+            'base_uri' => $config['server_url'],
         ]);
     }
 
@@ -62,7 +61,7 @@ class SimpegClientServiceProvider extends ServiceProvider
             'simpeg.oauth',
             'simpeg.oauth-client',
             'simpeg.client',
-            'simpeg.route'
+            'simpeg.route',
         ];
     }
 }
